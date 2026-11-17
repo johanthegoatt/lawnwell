@@ -1,0 +1,10 @@
+{
+  "name": "lawnwell",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Measure your lawn and get the grass seed to buy, or the turf rolls, with the topsoil for new ground. With Sprout the grass.",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
