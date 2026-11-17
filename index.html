@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lawnwell — seed or turf, and how much to buy</title>
+<meta name="description" content="Measure your lawn and Lawnwell tells you the grass seed to buy, or the turf rolls, with the topsoil for new ground. New lawn, thickening a thin one, or fresh turf.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%234f7a3a'/><path d='M20 48 q2-16 6-22 M32 48 q0-20 0-28 M44 48 q-2-16-6-22' fill='none' stroke='%23e4efdc' stroke-width='4' stroke-linecap='round'/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="intro">
+    <h1>Lawnwell</h1>
+    <p class="lede">Measure the ground and it works out the grass seed to buy, or the turf rolls, and the topsoil for new ground. With Sprout to help.</p>
+  </header>
+
+  <section class="panel" aria-label="Your lawn">
+    <div class="jobs" role="group" aria-label="What are you doing">
+      <button type="button" class="job" data-job="seed-new" aria-pressed="true">Seeding new ground
+        <small>bare soil, starting a lawn</small></button>
+      <button type="button" class="job" data-job="seed-over" aria-pressed="false">Thickening a thin lawn
+        <small>sowing over what's there</small></button>
+      <button type="button" class="job" data-job="turf" aria-pressed="false">Laying turf
+        <small>rolls, a lawn the same day</small></button>
+    </div>
+
+    <label class="field" style="margin-top:14px">Measure in
+      <select id="unit">
+        <option value="m">Metres</option>
+        <option value="ft">Feet</option>
+        <option value="yd">Yards</option>
+      </select>
+    </label>
+
+    <div class="patches" id="patches" aria-label="Patches of lawn"></div>
+    <div class="row-actions">
+      <button type="button" class="btn" id="add">+ Add another patch</button>
+    </div>
+
+    <div class="grid" id="opts">
+      <label class="field" id="boxField">Seed box size <span class="opt">optional</span>
+        <span class="with-unit"><input type="number" id="boxKg" min="0" step="0.5" inputmode="decimal" value="1"><span class="unit">kg</span></span>
+      </label>
+      <label class="field" id="rollField" hidden>Turf roll covers <span class="opt">optional</span>
+        <span class="with-unit"><input type="number" id="rollM2" min="0" step="0.05" inputmode="decimal" value="1"><span class="unit">m²</span></span>
+      </label>
+      <label class="field">New topsoil depth <span class="opt">optional</span>
+        <span class="with-unit"><input type="number" id="topsoil" min="0" step="1" inputmode="decimal" value=""><span class="unit">cm</span></span>
+      </label>
+    </div>
+
+    <label class="check" id="boostWrap" style="margin-top:12px">
+      <input type="checkbox" id="boost"> Add half again for seed that doesn't come up (RHS)
+    </label>
+  </section>
+
+  <section class="out" id="out" aria-live="polite">
+    <p class="headline" id="headline">Add a patch to start</p>
+    <p class="area" id="area"></p>
+    <ul class="lines" id="lines"></ul>
+    <p class="hint" id="hint"></p>
+  </section>
+
+  <section class="notes">
+    <h2>How it works it out</h2>
+    <p>Seed is sold by weight. A new lawn from bare soil takes about 35 g of seed per square metre; thickening a thin lawn is lower, about 25 g. Tick the box and it adds half as much again, the way the RHS suggests, so enough comes up.</p>
+    <p>Turf is sold by the roll, and a roll covers about a square metre. Rolls get cut to fit the edges, so it adds a little for waste and rounds up to whole rolls.</p>
+    <p>New ground usually wants a bed of topsoil first. Put in a depth and it works out the volume, with a tenth on top because loose soil beds down.</p>
+    <p>Rates and roll sizes vary, so every figure is one you can edit. Check the number on your own seed bag or with the turf yard. <a href="https://www.rhs.org.uk/lawns/lawns-from-seed">RHS: lawns from seed</a>.</p>
+  </section>
+</main>
+
+<button class="sprout" id="sprout" aria-label="Sprout — tap for a tip" hidden>
+  <div class="bubble" id="sproutBubble" role="status"></div>
+  <svg viewBox="0 0 72 88" aria-hidden="true">
+    <ellipse cx="36" cy="82" rx="22" ry="5" fill="rgba(0,0,0,.08)"/>
+    <path class="blade" d="M36 80 q-14-20-6-44" fill="none" stroke="var(--turf)" stroke-width="7" stroke-linecap="round"/>
+    <path class="blade" d="M36 80 q14-18 7-40" fill="none" stroke="var(--turf)" stroke-width="7" stroke-linecap="round"/>
+    <path class="blade" d="M36 80 q0-24 0-52" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round"/>
+    <circle id="sproutEyeL" cx="32" cy="40" r="2.4" fill="#1f2a1c"/>
+    <circle id="sproutEyeR" cx="40" cy="40" r="2.4" fill="#1f2a1c"/>
+    <path id="sproutMouth" d="M32 47 q4 3 8 0" fill="none" stroke="#1f2a1c" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>
+</button>
+
+<script src="src/core.js"></script>
+<script src="src/sprout.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
