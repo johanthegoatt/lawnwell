@@ -105,6 +105,7 @@
     if (r.topsoil) {
       var tp = r.topsoil;
       li("Topsoil for the bed", tp.cubicM + " m³ (" + tp.litres + " L, about " + tp.tonnes + " t)");
+      li("Ordered as", tp.bulkBags + " bulk bag" + (tp.bulkBags === 1 ? "" : "s") + " (~" + tp.bulkBagM3 + " m³ each) or " + tp.smallBags + " small 25 L bag" + (tp.smallBags === 1 ? "" : "s"));
     }
 
     if (sprout) sprout.cheer(r.seed ? "That's your seed sorted." : "Rolls counted, edges and all.");
