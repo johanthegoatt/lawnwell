@@ -81,3 +81,27 @@ test("plan with no usable area returns empty plan, not a crash", () => {
   assert.strictEqual(out.seed, null);
   assert.strictEqual(out.turf, null);
 });
+
+test("topsoil is broken into bulk bags and 25 L bags", () => {
+  // 20 m2 at 10 cm = 2 m3 bedded, /0.9 settle = 2.22 m3 => 2222 L.
+  const tp = L.topsoilPlan(20, 10);
+  assert.ok(Math.abs(tp.cubicM - 2.22) < 0.01);
+  assert.strictEqual(tp.bulkBagM3, 0.6);
+  assert.strictEqual(tp.bulkBags, Math.ceil(tp.cubicM / 0.6 - 1e-9)); // 4
+  assert.strictEqual(tp.smallBags, Math.ceil(tp.litres / 25 - 1e-9)); // 89
+  assert.ok(tp.bulkBags >= 1 && tp.smallBags > tp.bulkBags);
+});
+
+test("a custom bulk-bag size changes the bag count", () => {
+  const def = L.topsoilPlan(20, 10);
+  const big = L.topsoilPlan(20, 10, 0.8);
+  assert.strictEqual(big.bulkBagM3, 0.8);
+  assert.ok(big.bulkBags <= def.bulkBags, "bigger bags, no more of them");
+});
+
+test("plan passes the bulk-bag size through to topsoil", () => {
+  const out = L.plan({ areaM2: 30, job: "turf", topsoilDepthCm: 5, bulkBagM3: 0.5 });
+  assert.ok(out.topsoil);
+  assert.strictEqual(out.topsoil.bulkBagM3, 0.5);
+  assert.strictEqual(out.topsoil.bulkBags, Math.ceil(out.topsoil.cubicM / 0.5 - 1e-9));
+});
