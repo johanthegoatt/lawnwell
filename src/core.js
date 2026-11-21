@@ -120,17 +120,32 @@
 
   // Topsoil for a new bed under seed or turf: area times finished depth, plus a
   // tenth because loose soil beds down. Depth is in centimetres.
-  function topsoilPlan(areaM2, depthCm) {
+  //
+  // Suppliers sell topsoil two ways, so the volume is turned into both: a bulk
+  // ("dumpy") bag, typically about 0.6 cubic metres, for a larger bed delivered
+  // loose, and small 25-litre bags you carry from a shop for a patch. The tool
+  // gives both counts so you can pick whichever suits the job and compare the
+  // price. The bulk-bag size varies by yard (0.5-0.8 m3), so it's editable.
+  var BULK_BAG_M3 = 0.6;   // typical dumpy bag
+  var SMALL_BAG_L = 25;    // typical shop bag
+
+  function topsoilPlan(areaM2, depthCm, bulkBagM3) {
     var a = num(areaM2);
     var d = num(depthCm);
     if (!isFinite(a) || a <= 0 || !isFinite(d) || d <= 0) return null;
     var settle = 0.10;
     var m3 = (a * (d / 100)) / (1 - settle);
+    var litres = Math.round(m3 * 1000);
+    var bag = num(bulkBagM3);
+    if (!isFinite(bag) || bag <= 0) bag = BULK_BAG_M3;
     return {
       depthCm: d,
       cubicM: round(m3, 2),
-      litres: Math.round(m3 * 1000),
-      tonnes: round(m3 * TOPSOIL_DENSITY, 2)
+      litres: litres,
+      tonnes: round(m3 * TOPSOIL_DENSITY, 2),
+      bulkBagM3: round(bag, 2),
+      bulkBags: Math.ceil(m3 / bag - 1e-9),
+      smallBags: Math.ceil(litres / SMALL_BAG_L - 1e-9)
     };
   }
 
@@ -164,7 +179,7 @@
     } else {
       out.seed = seedPlan(area, { job: job, rate: input.rate, boost: input.boost, boxKg: input.boxKg });
     }
-    if (input.topsoilDepthCm) out.topsoil = topsoilPlan(area, input.topsoilDepthCm);
+    if (input.topsoilDepthCm) out.topsoil = topsoilPlan(area, input.topsoilDepthCm, input.bulkBagM3);
     if (input.seedCost != null && input.turfCost != null) {
       out.compare = compare(input.seedCost, input.turfCost);
     }
