@@ -105,3 +105,37 @@ test("plan passes the bulk-bag size through to topsoil", () => {
   assert.strictEqual(out.topsoil.bulkBagM3, 0.5);
   assert.strictEqual(out.topsoil.bulkBags, Math.ceil(out.topsoil.cubicM / 0.5 - 1e-9));
 });
+
+test("feedPlan: grams are the area times the rate", () => {
+  const f = L.feedPlan(50, { ratePerM2: 35 });
+  assert.strictEqual(f.grams, 1750);
+  assert.strictEqual(f.kg, 1.75);
+  assert.strictEqual(f.ratePerM2, 35);
+});
+
+test("feedPlan: defaults to the RHS 35 g/m2 and rounds bags up", () => {
+  const f = L.feedPlan(100, { bagKg: 2.5 }); // 100*35 = 3500 g = 3.5 kg
+  assert.strictEqual(f.ratePerM2, L.FEED_RATE);
+  assert.strictEqual(f.bags, 2);             // 3.5 kg over a 2.5 kg bag
+  assert.strictEqual(f.leftoverKg, 1.5);
+});
+
+test("feedPlan: no bag size leaves the bag count open", () => {
+  const f = L.feedPlan(40);
+  assert.strictEqual(f.bags, null);
+  assert.strictEqual(f.leftoverKg, null);
+});
+
+test("feedPlan: a bad area returns null", () => {
+  assert.strictEqual(L.feedPlan(0), null);
+  assert.strictEqual(L.feedPlan("x"), null);
+});
+
+test("plan wires in the feed only when asked", () => {
+  const off = L.plan({ areaM2: 50, job: "seed-new" });
+  assert.strictEqual(off.feed, null);
+  const on = L.plan({ areaM2: 50, job: "seed-new", feed: true, feedRate: 40 });
+  assert.ok(on.feed);
+  assert.strictEqual(on.feed.ratePerM2, 40);
+  assert.strictEqual(on.feed.grams, 2000);
+});
