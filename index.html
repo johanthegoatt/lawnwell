@@ -53,6 +53,18 @@
     <label class="check" id="boostWrap" style="margin-top:12px">
       <input type="checkbox" id="boost"> Add half again for seed that doesn't come up (RHS)
     </label>
+
+    <label class="check" id="feedWrap" style="margin-top:8px">
+      <input type="checkbox" id="feed"> Feed the ground before you sow or turf
+    </label>
+    <div class="grid" id="feedFields" hidden style="margin-top:8px">
+      <label class="field">Feed rate <span class="opt">optional</span>
+        <span class="with-unit"><input type="number" id="feedRate" min="0" step="5" inputmode="decimal" placeholder="35"><span class="unit">g/m²</span></span>
+      </label>
+      <label class="field">Feed bag size <span class="opt">optional</span>
+        <span class="with-unit"><input type="number" id="feedBagKg" min="0" step="0.5" inputmode="decimal" placeholder="2.5"><span class="unit">kg</span></span>
+      </label>
+    </div>
   </section>
 
   <section class="out" id="out" aria-live="polite">

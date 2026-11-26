@@ -61,8 +61,12 @@
       boxKg: $("boxKg").value,
       rollM2: $("rollM2").value,
       boost: $("boost").checked,
-      topsoilDepthCm: $("topsoil").value
+      topsoilDepthCm: $("topsoil").value,
+      feed: $("feed").checked,
+      feedRate: $("feedRate").value,
+      feedBagKg: $("feedBagKg").value
     };
+    $("feedFields").hidden = !$("feed").checked;
     var r = core.plan(input);
     var lines = $("lines");
     lines.innerHTML = "";
@@ -108,6 +112,12 @@
       li("Ordered as", tp.bulkBags + " bulk bag" + (tp.bulkBags === 1 ? "" : "s") + " (~" + tp.bulkBagM3 + " m³ each) or " + tp.smallBags + " small 25 L bag" + (tp.smallBags === 1 ? "" : "s"));
     }
 
+    if (r.feed) {
+      var fd = r.feed;
+      li("Feed before sowing", fd.ratePerM2 + " g/m², " + (fd.kg >= 1 ? fd.kg + " kg" : fd.grams + " g"));
+      if (fd.bags) li("Feed bags to buy", fd.bags + " × " + fd.bagKg + " kg" + (fd.leftoverKg > 0 ? " (" + fd.leftoverKg + " kg left)" : ""));
+    }
+
     if (sprout) sprout.cheer(r.seed ? "That's your seed sorted." : "Rolls counted, edges and all.");
   }
 
@@ -121,7 +131,7 @@
     patchesEl.querySelectorAll(".unit").forEach(function (sp) { sp.textContent = u; });
     render();
   });
-  ["boxKg", "rollM2", "boost", "topsoil"].forEach(function (id) {
+  ["boxKg", "rollM2", "boost", "topsoil", "feed", "feedRate", "feedBagKg"].forEach(function (id) {
     $(id).addEventListener("input", render);
     $(id).addEventListener("change", render);
     $(id).addEventListener("focus", function () { if (sprout) sprout.tip(id); });
