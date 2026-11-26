@@ -149,6 +149,35 @@
     };
   }
 
+  // The step people skip: a feed before you sow or turf. New ground is usually
+  // short on nutrients, and raking a general fertiliser in a few days before
+  // gives the young grass something to root into. It is spread by weight like
+  // seed, so the sum is the same: area times a rate, turned into bags.
+  //
+  // The RHS suggests a general fertiliser (such as Growmore) before seeding or
+  // turfing; rates run from about 35 up to 70 g per square metre depending on
+  // the feed and the season, so the default is 35 and you set your own from the
+  // bag. Returns null for a bad area so the page shows nothing rather than NaN.
+  var FEED_RATE = 35;      // grams per square metre, a modest general feed
+
+  function feedPlan(areaM2, opts) {
+    opts = opts || {};
+    var a = num(areaM2);
+    if (!isFinite(a) || a <= 0) return null;
+    var rate = isFinite(num(opts.ratePerM2)) && num(opts.ratePerM2) > 0 ? num(opts.ratePerM2) : FEED_RATE;
+    var grams = a * rate;
+    var bagKg = isFinite(num(opts.bagKg)) && num(opts.bagKg) > 0 ? num(opts.bagKg) : null;
+    var bags = bagKg ? Math.ceil(grams / 1000 / bagKg - 1e-9) : null;
+    return {
+      ratePerM2: round(rate, 1),
+      grams: Math.round(grams),
+      kg: round(grams / 1000, 2),
+      bagKg: bagKg,
+      bags: bags,
+      leftoverKg: bags ? round(bags * bagKg - grams / 1000, 2) : null
+    };
+  }
+
   // Seed against turf on price alone, when you give both. Seed is cheaper but
   // takes weeks to grow in; turf is a lawn the same day. We report the money and
   // leave the wait to the person.
@@ -170,7 +199,7 @@
     input = input || {};
     var unit = input.unit === "ft" || input.unit === "yd" ? input.unit : "m";
     var area = input.areaM2 != null ? num(input.areaM2) : areaFromPatches(input.patches, unit);
-    var out = { unit: unit, areaM2: round(area, 2), seed: null, turf: null, topsoil: null, compare: null };
+    var out = { unit: unit, areaM2: round(area, 2), seed: null, turf: null, topsoil: null, feed: null, compare: null };
     if (!isFinite(area) || area <= 0) return out;
 
     var job = input.job || "seed-new";
@@ -180,6 +209,7 @@
       out.seed = seedPlan(area, { job: job, rate: input.rate, boost: input.boost, boxKg: input.boxKg });
     }
     if (input.topsoilDepthCm) out.topsoil = topsoilPlan(area, input.topsoilDepthCm, input.bulkBagM3);
+    if (input.feed) out.feed = feedPlan(area, { ratePerM2: input.feedRate, bagKg: input.feedBagKg });
     if (input.seedCost != null && input.turfCost != null) {
       out.compare = compare(input.seedCost, input.turfCost);
     }
@@ -192,9 +222,11 @@
     seedPlan: seedPlan,
     turfPlan: turfPlan,
     topsoilPlan: topsoilPlan,
+    feedPlan: feedPlan,
     compare: compare,
     plan: plan,
     SEED_RATE: SEED_RATE,
+    FEED_RATE: FEED_RATE,
     TURF_ROLL_M2: TURF_ROLL_M2
   };
 });
